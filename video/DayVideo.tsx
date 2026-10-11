@@ -1,7 +1,7 @@
 // Bir günün videosu. Yalnızca recordings/day-XX.json okunur.
 
 import React, { useMemo } from "react";
-import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { Day, RECORDINGS } from "./data.ts";
 import { makeNarrative } from "./narrative.ts";
 import { sceneAt } from "./scene.ts";
@@ -45,7 +45,19 @@ export const DayVideo: React.FC<DayVideoProps> = ({ day: dayNo }) => {
 
   return (
     <AbsoluteFill style={{ background: `radial-gradient(120% 70% at 50% 45%, ${C.bg2} 0%, ${C.bg} 70%)` }}>
-      <Arena day={day} cells={scene.cells} food={scene.food} frame={frame} step={fs.step} heroVisible={kind === "vote" ? 0 : heroVisible} dim={dim} />
+      {/* scripts/make-audio.ts ile kayıttan sentezlenen müzik ve efektler */}
+      <Audio src={staticFile(`audio/day-${String(dayNo).padStart(2, "0")}-music.wav`)} volume={0.55} />
+      <Audio src={staticFile(`audio/day-${String(dayNo).padStart(2, "0")}-sfx.wav`)} volume={0.95} />
+      <Arena
+        day={day}
+        cells={scene.cells}
+        food={scene.food}
+        frame={frame}
+        step={fs.step}
+        heroVisible={kind === "vote" ? 0 : heroVisible}
+        focus={cap?.focusId != null ? { id: cap.focusId, alpha: interpolate(frame, [cap.start, cap.start + 8, cap.end - 6, cap.end], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) } : null}
+        dim={dim}
+      />
 
       <Header day={rec.day} gen={fs.gen} gens={rec.generations.length} opacity={hudIn} />
       {cap && <Captions caption={cap} sinceStart={frame - cap.start} untilEnd={cap.end - frame} />}

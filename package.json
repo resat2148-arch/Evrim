@@ -7,9 +7,10 @@
     "sim:sweep": "tsx sim/sweep.ts",
     "typecheck": "tsc --noEmit",
     "studio": "remotion studio video/index.ts",
-    "render": "remotion render video/index.ts Tag01 out/tag-01.mp4 --codec=h264 --crf=18",
+    "render": "npm run audio -- 1 && remotion render video/index.ts Tag01 out/tag-01.mp4 --codec=h264 --crf=18 --audio-codec=aac --audio-bitrate=192k",
     "still": "remotion still video/index.ts",
-    "stills": "scripts/render-stills.sh"
+    "stills": "scripts/render-stills.sh",
+    "audio": "tsx scripts/make-audio.ts"
   },
   "devDependencies": {
     "@fontsource/bricolage-grotesque": "5.3.0",

@@ -48,13 +48,15 @@ export const Arena: React.FC<{
   frame: number;
   step: number;
   heroVisible: number; // 0..1
+  focus?: { id: number; alpha: number } | null; // altyazıda adı geçen hücre
   dim?: number;
-}> = ({ day, cells, food, frame, step, heroVisible, dim = 0 }) => {
+}> = ({ day, cells, food, frame, step, heroVisible, focus, dim = 0 }) => {
   const S = ARENA.size;
   const px = S / day.rec.arena.width;
   const baseR = day.rec.base.radius * CELL_VIS * px;
   const hero = day.hero ? cells.find((c) => c.k.id === day.hero!.id && c.lyse === 0) : undefined;
   const scaleBar = 20 * px;
+  const focused = focus ? cells.find((c) => c.k.id === focus.id && c.lyse === 0) : undefined;
 
   return (
     <div style={{ position: "absolute", left: ARENA.x, top: ARENA.y, width: S, height: S, borderRadius: 46, overflow: "hidden", boxShadow: `0 0 0 4px #17322c, 0 0 80px rgba(60,160,140,0.18)` }}>
@@ -107,6 +109,17 @@ export const Arena: React.FC<{
               <rect x={-92} y={-30} width={184} height={50} rx={25} fill="rgba(10,20,18,0.82)" stroke={C.amber} strokeWidth={2.5} />
               <text y={6} textAnchor="middle" fill={C.amber} style={{ font: `800 32px "${FONT_DISPLAY}"` }}>
                 {hero.k.name}
+              </text>
+            </g>
+          </g>
+        )}
+        {focused && focus && (
+          <g transform={`translate(${focused.x * px} ${focused.y * px})`} opacity={focus.alpha}>
+            <circle r={baseR * focused.k.genes.size * focused.scale + 20 + 4 * Math.sin(frame / 4)} fill="none" stroke="#ffffff" strokeWidth={4} />
+            <g transform={`translate(${Math.max(80 - focused.x * px, Math.min(S - 80 - focused.x * px, 0))} ${(focused.y * px < 110 ? 1 : -1) * (baseR * focused.k.genes.size + 44) + (focused.y * px < 110 ? 10 : 0)})`}>
+              <rect x={-62} y={-28} width={124} height={46} rx={23} fill="rgba(10,20,18,0.85)" stroke="#ffffff" strokeWidth={2.5} />
+              <text y={6} textAnchor="middle" fill="#ffffff" style={{ font: `800 28px "${FONT_DISPLAY}"` }}>
+                #{focused.k.id}
               </text>
             </g>
           </g>

@@ -44,7 +44,9 @@ export const simConfig = {
 
   rules: {
     foodToSurvive: 1, // en az bu kadar yiyen yaşar
-    foodToReproduce: 2, // bu kadar yiyen 1 yavru yapar ve doyunca durur
+    foodPerChild: 1, // hayatta kalmanın üstündeki her 1 yemek = 1 yavru (2 yiyen 1, 3 yiyen 2 yavru…)
+    maxChildren: 6, // bir nesilde en fazla yavru
+    // Doyup durmak yok: herkes yemek bitene kadar aramaya devam eder.
   },
 
   mutation: {

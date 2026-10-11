@@ -164,8 +164,8 @@ export function runDay(
       const order = rng.shuffle(krumels.filter((k) => k.alive));
       for (const k of order) {
         if (!k.alive) continue; // bu adımda avlanmış olabilir
-        const satiated = k.eaten >= config.rules.foodToReproduce;
-        if (!satiated && k.energy > 0) {
+        // Doymak yok: enerjisi olan herkes yemek aramaya devam eder
+        if (k.energy > 0) {
           const senseR = k.genes.sense * config.base.sense;
           const bodyR = k.genes.size * config.base.radius;
           const stepLen = k.genes.speed * config.base.speed;
@@ -240,7 +240,7 @@ export function runDay(
           }
 
           // Avlanma
-          if (config.predation.enabled && k.eaten < config.rules.foodToReproduce) {
+          if (config.predation.enabled) {
             for (const o of krumels) {
               if (!o.alive || o === k) continue;
               if (k.genes.size < o.genes.size * config.predation.sizeRatio) continue;
@@ -275,7 +275,7 @@ export function runDay(
         break;
       }
       const canStillEat = krumels.some(
-        (k) => k.alive && k.eaten < config.rules.foodToReproduce && k.energy > 0,
+        (k) => k.alive && k.energy > 0,
       );
       if (!canStillEat) {
         endReason = "noOneCanEat";
@@ -302,7 +302,7 @@ export function runDay(
         died++; // nesil içinde avlandı
         continue;
       }
-      if (k.eaten >= config.rules.foodToReproduce) ate2++;
+      if (k.eaten >= config.rules.foodToSurvive + config.rules.foodPerChild) ate2++;
       else if (k.eaten >= config.rules.foodToSurvive) ate1++;
       else ate0++;
 
@@ -313,7 +313,12 @@ export function runDay(
         continue;
       }
       survivors.push(k);
-      if (k.eaten >= config.rules.foodToReproduce) {
+      // Hayatta kalmanın üstündeki her foodPerChild yemek = 1 yavru
+      const nKids = Math.min(
+        config.rules.maxChildren,
+        Math.floor((k.eaten - config.rules.foodToSurvive) / config.rules.foodPerChild),
+      );
+      for (let c = 0; c < nKids; c++) {
         const genes = { ...k.genes };
         const mutation: Partial<Genes> = {};
         let mutated = false;

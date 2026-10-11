@@ -80,7 +80,7 @@ export type GenerationSummary = {
   popStart: number;
   ate0: number;
   ate1: number;
-  ate2: number;
+  ate2: number; // 2 ve üstü
   died: number;
   born: number;
   mutants: number; // doğanlar içinde mutasyonlu olanlar

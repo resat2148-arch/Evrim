@@ -5,7 +5,7 @@ import type { Day, Track } from "./data.ts";
 import { de } from "./theme.ts";
 import type { FrameState } from "./timeline.ts";
 
-export type Caption = { text: string; sub?: string; tone?: "red" | "green" | "amber" };
+export type Caption = { text: string; sub?: string; tone?: "red" | "green" | "amber"; focusId?: number };
 
 type Facts = ReturnType<typeof computeFacts>;
 
@@ -62,39 +62,58 @@ function heroPct(f: Facts): number | null {
   return Math.round((f.hero.genes.speed / f.heroParent.genes.speed - 1) * 100);
 }
 
-/** Bir neslin hareket kısmında gösterilecek (en fazla 2) cümle */
+/** Neslin en çok yiyeni (eşitlikte küçük id) */
+function topEater(day: Day, gen: number): { k: Track; meals: number } | null {
+  const g = day.rec.generations[gen];
+  let best: { k: Track; meals: number } | null = null;
+  for (const k of day.rec.krumels) {
+    if (!k.track.length || k.firstStep > g.startStep || k.lastStep < g.endStep) continue;
+    const meals = day.mealsBetween(k, g.startStep, g.endStep);
+    if (!best || meals > best.meals) best = { k, meals };
+  }
+  return best;
+}
+
+const kidsWord = (n: number) => (n === 1 ? "Kind" : "Kinder");
+
+/** Bir neslin hareket kısmında gösterilecek cümleler (1. nesilde 3, sonra en fazla 2) */
 function moveBeats(day: Day, f: Facts, gen: number, statShownAt: number): Caption[] {
   const g = f.gens[gen];
   const name = f.hero?.name ?? "";
+  const top = topEater(day, gen);
+  const champion: Caption | null =
+    top && top.meals >= 4 && top.k.id !== f.hero?.id
+      ? { text: `Krümel #${top.k.id} frisst *${top.meals}×*: das gibt *${top.meals - 1}* Kinder!`, focusId: top.k.id }
+      : null;
   if (gen === 0) {
     return [
       { text: "Wer nicht frisst, *stirbt*." },
-      { text: "Wer zweimal frisst, bekommt ein *Kind*." },
-      { text: `*${g.foodSpawned}* Futterstücke. Wer zuerst kommt, frisst.` },
+      { text: "Jedes weitere Futter: ein *Kind* mehr." },
+      champion ?? { text: `*${g.foodSpawned}* Futterstücke. Wer zuerst kommt, frisst.` },
     ];
   }
   const beats: Caption[] = [];
-  if (f.hero && gen === f.heroBornGen && f.hero.mutation) {
-    const first = f.gens.slice(0, gen).every((x) => x.mutants === 0) || gen === 1;
-    beats.push({ text: `${first ? "Erste Mutation" : "Mutation"}: *${name}*` });
+  if (f.hero && gen === f.heroBornGen) {
+    beats.push({ text: `Neu geboren: *${name}*.` });
     const pct = heroPct(f);
-    if (pct && pct > 0) beats.push({ text: `*${pct} %* schneller als seine Eltern.`, tone: "amber" });
+    if (f.hero.mutation && pct && pct > 0) beats.push({ text: `*${pct} %* schneller als seine Eltern.` });
   }
-  const kid = f.heroKids.find((k) => k.firstStep === g.startStep);
-  if (f.hero && kid) {
-    const firstKid = f.heroKids.indexOf(kid) === 0;
-    const ds = kid.genes.speed - f.hero.genes.speed;
-    const how = Math.abs(ds) < 0.02 ? "genauso schnell wie er" : ds > 0 ? "noch schneller" : "etwas langsamer";
-    const bigger = kid.genes.size > f.hero.genes.size + 0.1 ? " – und größer" : "";
-    beats.push({ text: `${firstKid ? `*${name}* bekommt ein Kind` : `${name}s zweites Kind`}: ${how}${bigger}.` });
+  const kids = f.heroKids.filter((k) => k.firstStep === g.startStep);
+  if (f.hero && kids.length) {
+    beats.push({ text: `*${name}* hat *${kids.length}* ${kidsWord(kids.length)} bekommen.` });
+    const fastest = kids.reduce((a, b) => (b.genes.speed > a.genes.speed ? b : a));
+    const pct = Math.round((fastest.genes.speed / f.hero.genes.speed - 1) * 100);
+    if (pct >= 10) beats.push({ text: `Eins davon ist *${pct} %* schneller.`, focusId: fastest.id });
   }
+  if (f.hero && gen >= f.heroBornGen && day.aliveAt(f.hero, g.endStep)) {
+    const m = day.mealsBetween(f.hero, g.startStep, g.endStep);
+    if (m >= 2) beats.push({ text: `*${name}* frisst *${m}×* in dieser Generation.` });
+  }
+  if (champion) beats.push(champion);
   if (gen === statShownAt) {
     beats.push({ text: `Schnelle Krümel fressen mehr: *${de(f.fastAvg, 1)}* statt ${de(f.normAvg, 1)} pro Generation.` });
   }
   beats.push({ text: `Generation ${gen + 1}: ${g.foodSpawned < g.popStart ? "nur " : ""}*${g.foodSpawned}* Futter für ${g.popStart} Krümel.` });
-  if (f.hero && day.aliveAt(f.hero, g.endStep) && day.mealsBetween(f.hero, g.startStep, g.endStep) > 0) {
-    beats.push({ text: `*${name}* überlebt auch Generation ${gen + 1}.` });
-  }
   return beats.slice(0, 2);
 }
 

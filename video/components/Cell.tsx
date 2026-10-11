@@ -104,12 +104,12 @@ export const Cell: React.FC<{
   });
 
   // Besin kofulları: yediği her yemek
-  const vac = Array.from({ length: Math.min(view.vacuoles, 3) }, (_, i) => {
-    const a = 2.2 + i * 1.6 + rnd(`va${i}`) * 0.6;
-    const d = r * 0.42;
+  const vac = Array.from({ length: Math.min(view.vacuoles, 5) }, (_, i) => {
+    const a = 2.2 + i * 1.25 + rnd(`va${i}`) * 0.4;
+    const d = r * 0.45;
     const isNew = i === view.vacuoles - 1 && view.lastMealAge < 8;
     const grow = isNew ? Math.min(1, view.lastMealAge / 4 + 0.3) : 1;
-    return { x: Math.cos(a) * d * sx, y: Math.sin(a) * d * sy, s: r * 0.24 * grow, flash: isNew ? 1 - view.lastMealAge / 8 : 0 };
+    return { x: Math.cos(a) * d * sx, y: Math.sin(a) * d * sy, s: r * 0.21 * grow, flash: isNew ? 1 - view.lastMealAge / 8 : 0 };
   });
 
   // Kasılabilir koful: arkada yavaşça atar

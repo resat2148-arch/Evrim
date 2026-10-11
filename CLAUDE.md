@@ -56,8 +56,8 @@ Neden: Remotion kareleri paralel ve sırasız render eder; simülasyon ise sıra
 ## Kurulum ve komutlar (uygulanan hâl)
 - `npm run sim:sweep -- --seeds 1,2,3 [--set food.spawnPerStep=0.1]` — Tag 1'i bellekte birkaç seed ile dener (dosya yazmaz)
 - `npm run sim:day -- --day N [--dry] [--force]` — Tag N'i çalıştırır; `state/day-NN-end.json` + `recordings/day-NN.json` yazar. Tag > 1 önceki state'ten devam eder, `events/day-NN.json` varsa uygular. Var olan state `--force` olmadan ezilmez.
-- `npm run render` — `out/tag-01.mp4` (1080×1920, 30 fps); `npm run stills` — `out/stills/`
+- `npm run render` — önce `npm run audio` ile müzik+efektleri kayıttan sentezler (`public/audio/`, git'te yok), sonra `out/tag-01.mp4` (1080×1920, 30 fps, AAC ses); `npm run stills` — `out/stills/`
 - Bulut ortamında Remotion için: `REMOTION_BROWSER=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell`
-- Seri: seed 10. Her nesil yemek bitene kadar sürer (yemek `spawnWindow` adım boyunca belirir). Bu kuralda nesil sonu nüfusu = yenen yemek sayısı.
-- Kahraman: gün sonunda kendisi dahil en büyük yaşayan soya sahip Krümel isim alır (Tag 1: Gerhard = #22, ilk mutant). İsim state'te kalır.
+- Seri: seed 10. Her nesil yemek bitene kadar sürer (yemek `spawnWindow` adım boyunca belirir). Doyup durmak yok: herkes yemeye devam eder; 1 yemek = hayatta kalır, her ek yemek = 1 yavru (`rules.foodPerChild`). Bu kuralda nesil sonu nüfusu = yenen yemek sayısı.
+- Kahraman: gün sonunda kendisi dahil en büyük yaşayan soya sahip Krümel isim alır (Tag 1: Gerhard = #39, 4. nesilde doğdu, 2 nesilde 7 yemek → 5 yavru). İsim state'te kalır.
 - Yeni gün videosu için `video/data.ts` içindeki `RECORDINGS`'e kaydı ekle.
