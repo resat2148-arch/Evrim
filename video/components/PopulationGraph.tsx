@@ -9,7 +9,9 @@ export const PopulationGraph: React.FC<{ rec: DayRecording; step: number; alive:
   const cw = w - pad.l - pad.r;
   const ch = h - pad.t - pad.b;
   const total = rec.totalSteps;
-  const ymax = Math.max(35, Math.ceil((Math.max(...rec.population) + 3) / 5) * 5);
+  const peak = Math.max(rec.generations[0].popStart, ...rec.population, ...rec.generations.map((g) => g.popEnd));
+  const ymax = Math.max(10, Math.ceil((peak + 2) / 5) * 5);
+  const tickStep = ymax <= 20 ? 5 : 10;
   const sx = (s: number) => pad.l + (s / (total - 1)) * cw;
   const sy = (v: number) => pad.t + (1 - v / ymax) * ch;
   const upto = Math.min(total - 1, Math.floor(step));
@@ -17,7 +19,7 @@ export const PopulationGraph: React.FC<{ rec: DayRecording; step: number; alive:
   for (let s = 0; s <= upto; s += 2) d += `L${sx(s).toFixed(1)},${sy(rec.population[s]).toFixed(1)}`;
   d += `L${sx(upto).toFixed(1)},${sy(rec.population[upto]).toFixed(1)}`;
   const area = `${d}L${sx(upto)},${sy(0)}L${sx(0)},${sy(0)}Z`;
-  const ticks = [0, 10, 20, 30].filter((v) => v <= ymax);
+  const ticks = Array.from({ length: Math.floor(ymax / tickStep) + 1 }, (_, i) => i * tickStep);
 
   return (
     <div style={{ position: "absolute", left: x, top: y, width: w, height: h, background: C.panel, borderRadius: 28, border: `2px solid ${C.line}` }}>

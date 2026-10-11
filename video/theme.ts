@@ -8,8 +8,8 @@ export const FPS = 30;
 /** Mikroskop alanı (arena) ekranda nerede */
 export const ARENA = { x: 40, y: 400, size: 1000 };
 /** Hücreleri simülasyondaki çarpışma yarıçapından büyük çiz (detay görünsün) */
-export const CELL_VIS = 2.6;
-export const FOOD_VIS_R = 1.0; // dünya birimi
+export const CELL_VIS = 2.0;
+export const FOOD_VIS_R = 0.7; // dünya birimi
 
 export const C = {
   bg: "#030b0a",

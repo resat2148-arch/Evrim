@@ -3,17 +3,17 @@
  "day": 1,
  "seed": 10,
  "rng": [
-  1167743213,
-  4177334316,
-  1362088131,
-  3195487417
+  -2146944327,
+  3305490554,
+  2849197076,
+  3195416889
  ],
- "nextKrumelId": 66,
- "nextFoodId": 111,
+ "nextKrumelId": 29,
+ "nextFoodId": 50,
  "generationsSoFar": 5,
  "krumels": [
   {
-   "id": 7,
+   "id": 1,
    "parentId": null,
    "name": null,
    "bornDay": 1,
@@ -23,335 +23,200 @@
     "size": 1,
     "sense": 1
    },
-   "x": 70.2500571154575,
-   "y": 94.11642784306441,
-   "heading": -2.0948257443264175
+   "x": 34.46040670831392,
+   "y": 36.820118042588554,
+   "heading": -3.1073150256607427
   },
   {
-   "id": 38,
-   "parentId": 14,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 3,
-   "genes": {
-    "speed": 1.1155973609205305,
-    "size": 1,
-    "sense": 1
-   },
-   "x": 53.15374127082208,
-   "y": 77.87565806645466,
-   "heading": 1.4900183910621145
-  },
-  {
-   "id": 39,
-   "parentId": 24,
+   "id": 13,
+   "parentId": 2,
    "name": "Gerhard",
    "bornDay": 1,
-   "bornGeneration": 3,
+   "bornGeneration": 2,
    "genes": {
     "speed": 1,
     "size": 1,
     "sense": 1
    },
-   "x": 41.76165708313758,
-   "y": 57.69342303212417,
-   "heading": -5.470386268971948
+   "x": 19.6956611102396,
+   "y": 40.83439268740464,
+   "heading": 1.1640854953429365
   },
   {
-   "id": 40,
-   "parentId": 26,
+   "id": 16,
+   "parentId": 9,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 3,
    "genes": {
-    "speed": 1,
+    "speed": 1.0445257947225655,
     "size": 1,
-    "sense": 1.1042729245087433
+    "sense": 1
    },
-   "x": 68.35462668367997,
-   "y": 36.64994403453418,
-   "heading": -0.7035715199151829
+   "x": 43.404329877731826,
+   "y": 13.374417838064566,
+   "heading": 3.6135079889291952
   },
   {
-   "id": 42,
-   "parentId": 30,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 3,
-   "genes": {
-    "speed": 0.8868395818919956,
-    "size": 1.1564242401830267,
-    "sense": 1.0053733166644736
-   },
-   "x": 19.240050680191228,
-   "y": 73.21036266733746,
-   "heading": -3.120855054924202
-  },
-  {
-   "id": 47,
+   "id": 19,
    "parentId": 13,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 4,
    "genes": {
-    "speed": 1,
-    "size": 1,
+    "speed": 0.8426823084033024,
+    "size": 1.091001749898194,
     "sense": 1
    },
-   "x": 12.546061046821348,
-   "y": 6.582541086668679,
-   "heading": 8.000485198367084
+   "x": 35.24714856408964,
+   "y": 9.204865591365158,
+   "heading": -0.9754376962621436
   },
   {
-   "id": 48,
-   "parentId": 25,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 4,
-   "genes": {
-    "speed": 1,
-    "size": 1,
-    "sense": 1
-   },
-   "x": 75.23323961204763,
-   "y": 21.649640289831492,
-   "heading": -0.6573211052974135
-  },
-  {
-   "id": 50,
-   "parentId": 38,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 4,
-   "genes": {
-    "speed": 1.1155973609205305,
-    "size": 0.9438760346057218,
-    "sense": 1
-   },
-   "x": 9.563814644897883,
-   "y": 42.198367472356786,
-   "heading": 4.164768312002274
-  },
-  {
-   "id": 51,
-   "parentId": 39,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 4,
-   "genes": {
-    "speed": 1.3501353754944208,
-    "size": 1.0774399849984426,
-    "sense": 1
-   },
-   "x": 31.179401924531927,
-   "y": 79.99147701793625,
-   "heading": 3.984526960199149
-  },
-  {
-   "id": 55,
-   "parentId": 44,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 4,
-   "genes": {
-    "speed": 0.9170617801493622,
-    "size": 0.8603334506723124,
-    "sense": 0.7554480643502837
-   },
-   "x": 73.10427828139049,
-   "y": 3.8937927842094404,
-   "heading": -0.6943122545340727
-  },
-  {
-   "id": 56,
-   "parentId": 46,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 4,
-   "genes": {
-    "speed": 0.8962325399091923,
-    "size": 1.0748677100598818,
-    "sense": 0.7838173677306886
-   },
-   "x": 38.25241479105434,
-   "y": 81.52945856607013,
-   "heading": -1.9464882265599504
-  },
-  {
-   "id": 57,
-   "parentId": 39,
+   "id": 22,
+   "parentId": 13,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 5,
    "genes": {
     "speed": 1,
+    "size": 1.0330316037168374,
+    "sense": 1
+   },
+   "x": 21.983616658898946,
+   "y": 39.82679186993826,
+   "heading": 2.546235046144305
+  },
+  {
+   "id": 23,
+   "parentId": 16,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 5,
+   "genes": {
+    "speed": 1.0445257947225655,
     "size": 1,
-    "sense": 1.2048328645654327
+    "sense": 1.0605206619584822
    },
-   "x": 43.20271888482066,
-   "y": 55.65054739133497,
-   "heading": 0.4127506634418746
+   "x": 43.76113637969447,
+   "y": 10.900011016186406,
+   "heading": 1.9408015714099296
   },
   {
-   "id": 58,
-   "parentId": 39,
+   "id": 24,
+   "parentId": 16,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 5,
    "genes": {
-    "speed": 0.9739748774310141,
+    "speed": 1.1526247189826502,
     "size": 1,
-    "sense": 1.2122537703550536
+    "sense": 1.0964810365583322
    },
-   "x": 39.44573426147374,
-   "y": 58.634965109833175,
-   "heading": 1.1147566973138285
+   "x": 45.904269426971396,
+   "y": 13.357032495161253,
+   "heading": 0.8423222047294003
   },
   {
-   "id": 59,
-   "parentId": 39,
+   "id": 25,
+   "parentId": 19,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 5,
    "genes": {
-    "speed": 1,
-    "size": 0.9759527400821997,
+    "speed": 0.6818069441835042,
+    "size": 1.091001749898194,
     "sense": 1
    },
-   "x": 40.40425615211528,
-   "y": 59.792818829123824,
-   "heading": 1.0805406862967728
+   "x": 36.80865735123151,
+   "y": 7.252510524355387,
+   "heading": 3.3670894444705417
   },
   {
-   "id": 60,
-   "parentId": 40,
+   "id": 26,
+   "parentId": 19,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 5,
    "genes": {
-    "speed": 0.806449968774069,
-    "size": 0.9981782164623211,
-    "sense": 1.1042729245087433
+    "speed": 0.661314292194864,
+    "size": 1.091001749898194,
+    "sense": 0.8486944750626253
    },
-   "x": 67.81963923496157,
-   "y": 39.092030935058766,
-   "heading": 0.3971582008332203
+   "x": 37.73801246904519,
+   "y": 9.418400148263132,
+   "heading": 2.361757878409795
   },
   {
-   "id": 61,
-   "parentId": 51,
+   "id": 27,
+   "parentId": 19,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 5,
    "genes": {
-    "speed": 1.3501353754944208,
-    "size": 1.0774399849984426,
+    "speed": 0.8426823084033024,
+    "size": 1.091001749898194,
     "sense": 1
    },
-   "x": 28.965564691560527,
-   "y": 78.83004483915458,
-   "heading": 4.306251144073609
+   "x": 37.44664168524376,
+   "y": 8.016492750041476,
+   "heading": 5.971770783057525
   },
   {
-   "id": 62,
-   "parentId": 51,
+   "id": 28,
+   "parentId": 19,
    "name": null,
    "bornDay": 1,
    "bornGeneration": 5,
    "genes": {
-    "speed": 1.3501353754944208,
-    "size": 1.0774399849984426,
-    "sense": 1
+    "speed": 0.8426823084033024,
+    "size": 1.2447726259700451,
+    "sense": 0.7682337621888522
    },
-   "x": 28.83688387006472,
-   "y": 79.11820205293657,
-   "heading": 3.6701786597986463
-  },
-  {
-   "id": 63,
-   "parentId": 51,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 5,
-   "genes": {
-    "speed": 1.3501353754944208,
-    "size": 1.231974916045726,
-    "sense": 1
-   },
-   "x": 30.336828060087413,
-   "y": 77.6377418410408,
-   "heading": 6.066106142538186
-  },
-  {
-   "id": 64,
-   "parentId": 55,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 5,
-   "genes": {
-    "speed": 0.8304414869542545,
-    "size": 0.915754541140457,
-    "sense": 0.7554480643502837
-   },
-   "x": 74.67145772479083,
-   "y": 5.841598881382209,
-   "heading": 1.3271015971883837
-  },
-  {
-   "id": 65,
-   "parentId": 55,
-   "name": null,
-   "bornDay": 1,
-   "bornGeneration": 5,
-   "genes": {
-    "speed": 0.9170617801493622,
-    "size": 0.8603334506723124,
-    "sense": 0.7554480643502837
-   },
-   "x": 74.52588208779646,
-   "y": 5.950256403535604,
-   "heading": 0.5789841718718892
+   "x": 35.804310508418595,
+   "y": 11.641989012078927,
+   "heading": 4.823059802474366
   }
  ],
  "history": [
   {
    "day": 1,
    "generation": 0,
-   "population": 23
+   "population": 9
   },
   {
    "day": 1,
    "generation": 1,
-   "population": 18
+   "population": 11
   },
   {
    "day": 1,
    "generation": 2,
-   "population": 25
+   "population": 10
   },
   {
    "day": 1,
    "generation": 3,
-   "population": 24
+   "population": 8
   },
   {
    "day": 1,
    "generation": 4,
-   "population": 20
+   "population": 11
   }
  ],
  "config": {
   "seed": 10,
   "arena": {
-   "width": 100,
-   "height": 100
+   "width": 50,
+   "height": 50
   },
   "day": {
    "generations": 5,
    "maxStepsPerGeneration": 1000
   },
   "initial": {
-   "count": 20,
+   "count": 5,
    "genes": {
     "speed": 1,
     "size": 1,
@@ -365,9 +230,9 @@
    "turnJitter": 0.35
   },
   "food": {
-   "initial": 6,
-   "spawnPerStep": 0.09,
-   "spawnWindow": 200,
+   "initial": 2,
+   "spawnPerStep": 0.05,
+   "spawnWindow": 120,
    "max": 30,
    "radius": 0.6
   },

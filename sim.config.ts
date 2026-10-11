@@ -7,7 +7,7 @@ export const simConfig = {
   seed: 10,
 
   /** 2D arena, birim cinsinden (render'da kareye ölçeklenir) */
-  arena: { width: 100, height: 100 },
+  arena: { width: 50, height: 50 },
 
   /** Bir "Tag" (bölüm) kaç nesil. Her nesil yemek tükenene kadar sürer
    *  (ya da herkes doyana/enerjisi bitene kadar); güvenlik için adım sınırı var. */
@@ -15,7 +15,7 @@ export const simConfig = {
 
   /** Tag 1 başlangıcı: özdeş Krümel'ler */
   initial: {
-    count: 20,
+    count: 5, // az sayıda: izleyici tek tek takip edebilsin
     genes: { speed: 1, size: 1, sense: 1 },
   },
 
@@ -28,9 +28,9 @@ export const simConfig = {
   },
 
   food: {
-    initial: 6, // neslin başında hazır olan yemek
-    spawnPerStep: 0.09, // ilk spawnWindow adımda, adım başına bu olasılıkla yeni yemek
-    spawnWindow: 200, // bu adımdan sonra yeni yemek çıkmaz; nesil kalan yemek bitince sona erer
+    initial: 2, // neslin başında hazır olan yemek
+    spawnPerStep: 0.05, // ilk spawnWindow adımda, adım başına bu olasılıkla yeni yemek
+    spawnWindow: 120, // bu adımdan sonra yeni yemek çıkmaz; nesil kalan yemek bitince sona erer
     // → nesil başına beklenen yemek ≈ initial + spawnPerStep × spawnWindow (kıtlığın ayarı)
     max: 30, // aynı anda en fazla yemek
     radius: 0.6,

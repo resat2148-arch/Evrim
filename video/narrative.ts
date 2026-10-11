@@ -82,7 +82,7 @@ function moveBeats(day: Day, f: Facts, gen: number, statShownAt: number): Captio
   const name = f.hero?.name ?? "";
   const top = topEater(day, gen);
   const champion: Caption | null =
-    top && top.meals >= 4 && top.k.id !== f.hero?.id
+    top && top.meals >= 3 && top.k.id !== f.hero?.id
       ? { text: `Krümel #${top.k.id} frisst *${top.meals}×*: das gibt *${top.meals - 1}* Kinder!`, focusId: top.k.id }
       : null;
   if (gen === 0) {

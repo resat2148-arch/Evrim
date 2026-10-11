@@ -52,10 +52,12 @@ export const Arena: React.FC<{
   dim?: number;
 }> = ({ day, cells, food, frame, step, heroVisible, focus, dim = 0 }) => {
   const S = ARENA.size;
-  const px = S / day.rec.arena.width;
+  // Duvara değen hücreler kesilmesin: dünya, kenarlardan PAD kadar içeride çizilir
+  const PAD = 44;
+  const px = (S - 2 * PAD) / day.rec.arena.width;
   const baseR = day.rec.base.radius * CELL_VIS * px;
   const hero = day.hero ? cells.find((c) => c.k.id === day.hero!.id && c.lyse === 0) : undefined;
-  const scaleBar = 20 * px;
+  const scaleBar = 10 * px;
   const focused = focus ? cells.find((c) => c.k.id === focus.id && c.lyse === 0) : undefined;
 
   return (
@@ -88,6 +90,7 @@ export const Arena: React.FC<{
         </defs>
         <rect width={S} height={S} fill="url(#field)" />
         <Bokeh frame={frame} />
+        <g transform={`translate(${PAD} ${PAD})`}>
         {food.map((f) => (
           <Food key={f.id} f={f} px={px} frame={frame} />
         ))}
@@ -105,7 +108,7 @@ export const Arena: React.FC<{
               transform={`rotate(${frame * 1.5})`}
             />
             {/* etiket: üst kenara yakınsa halkanın altına */}
-            <g transform={`translate(${Math.max(110 - hero.x * px, Math.min(S - 110 - hero.x * px, 0))} ${(hero.y * px < 110 ? 1 : -1) * (baseR * hero.k.genes.size + 46) + (hero.y * px < 110 ? 10 : 0)})`}>
+            <g transform={`translate(${Math.max(110 - PAD - hero.x * px, Math.min(S - PAD - 110 - hero.x * px, 0))} ${(hero.y * px + PAD < 110 ? 1 : -1) * (baseR * hero.k.genes.size + 46) + (hero.y * px + PAD < 110 ? 10 : 0)})`}>
               <rect x={-92} y={-30} width={184} height={50} rx={25} fill="rgba(10,20,18,0.82)" stroke={C.amber} strokeWidth={2.5} />
               <text y={6} textAnchor="middle" fill={C.amber} style={{ font: `800 32px "${FONT_DISPLAY}"` }}>
                 {hero.k.name}
@@ -116,7 +119,7 @@ export const Arena: React.FC<{
         {focused && focus && (
           <g transform={`translate(${focused.x * px} ${focused.y * px})`} opacity={focus.alpha}>
             <circle r={baseR * focused.k.genes.size * focused.scale + 20 + 4 * Math.sin(frame / 4)} fill="none" stroke="#ffffff" strokeWidth={4} />
-            <g transform={`translate(${Math.max(80 - focused.x * px, Math.min(S - 80 - focused.x * px, 0))} ${(focused.y * px < 110 ? 1 : -1) * (baseR * focused.k.genes.size + 44) + (focused.y * px < 110 ? 10 : 0)})`}>
+            <g transform={`translate(${Math.max(80 - PAD - focused.x * px, Math.min(S - PAD - 80 - focused.x * px, 0))} ${(focused.y * px + PAD < 110 ? 1 : -1) * (baseR * focused.k.genes.size + 44) + (focused.y * px + PAD < 110 ? 10 : 0)})`}>
               <rect x={-62} y={-28} width={124} height={46} rx={23} fill="rgba(10,20,18,0.85)" stroke="#ffffff" strokeWidth={2.5} />
               <text y={6} textAnchor="middle" fill="#ffffff" style={{ font: `800 28px "${FONT_DISPLAY}"` }}>
                 #{focused.k.id}
@@ -124,13 +127,14 @@ export const Arena: React.FC<{
             </g>
           </g>
         )}
+        </g>
         <rect width={S} height={S} fill="url(#vignette)" />
         {dim > 0 && <rect width={S} height={S} fill={`rgba(2,8,7,${dim})`} />}
         {/* ölçek çubuğu ve kayıt bilgisi */}
         <g opacity={0.85}>
           <rect x={44} y={S - 58} width={scaleBar} height={7} rx={3.5} fill="rgba(235,245,240,0.85)" />
           <text x={44} y={S - 70} fill="rgba(235,245,240,0.85)" style={{ font: `500 24px "${FONT_MONO}"` }}>
-            20 µm
+            10 µm
           </text>
           <text x={S - 44} y={S - 52} textAnchor="end" fill="rgba(235,245,240,0.6)" style={{ font: `500 22px "${FONT_MONO}"` }}>
             seed {day.rec.seed} · Schritt {String(Math.floor(step)).padStart(4, "0")}
