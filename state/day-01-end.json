@@ -1,0 +1,352 @@
+{
+ "version": 1,
+ "day": 1,
+ "seed": 10,
+ "rng": [
+  -1916365992,
+  2903788443,
+  3264900904,
+  3195488435
+ ],
+ "nextKrumelId": 59,
+ "nextFoodId": 117,
+ "generationsSoFar": 5,
+ "krumels": [
+  {
+   "id": 4,
+   "parentId": null,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 0,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 74.78429654643764,
+   "y": 3.1459230776740226,
+   "heading": 1.4471385913415116
+  },
+  {
+   "id": 22,
+   "parentId": 2,
+   "name": "Gerhard",
+   "bornDay": 1,
+   "bornGeneration": 1,
+   "genes": {
+    "speed": 1.3048476661402597,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 47.63134976783243,
+   "y": 33.14712460553493,
+   "heading": 0.518810151857947
+  },
+  {
+   "id": 37,
+   "parentId": 2,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 3,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 57.15703427224539,
+   "y": 6.241406713255428,
+   "heading": -1.6251435116028978
+  },
+  {
+   "id": 39,
+   "parentId": 11,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 3,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 93.09011465891088,
+   "y": 75.42860788445309,
+   "heading": -1.0467044988454215
+  },
+  {
+   "id": 41,
+   "parentId": 22,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 3,
+   "genes": {
+    "speed": 1.3048476661402597,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 71.36810460389846,
+   "y": 10.148523897943988,
+   "heading": 10.801186787322852
+  },
+  {
+   "id": 42,
+   "parentId": 24,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 3,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 82.32111144994332,
+   "y": 93.63945340184243,
+   "heading": 0.9389385909590754
+  },
+  {
+   "id": 46,
+   "parentId": 34,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 3,
+   "genes": {
+    "speed": 1.1541795644829724,
+    "size": 0.9930102828769479,
+    "sense": 1.1217339990448179
+   },
+   "x": 94.63299074179132,
+   "y": 12.834755571085148,
+   "heading": -1.5585229685116424
+  },
+  {
+   "id": 49,
+   "parentId": 11,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 0.9374762063097022
+   },
+   "x": 21.375404002731702,
+   "y": 47.93923668319298,
+   "heading": -1.9745309653137888
+  },
+  {
+   "id": 50,
+   "parentId": 22,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 1.474796257950238,
+    "size": 1.4110887807417083,
+    "sense": 1
+   },
+   "x": 85.27422771734881,
+   "y": 71.82656291290144,
+   "heading": -0.3331108727285667
+  },
+  {
+   "id": 51,
+   "parentId": 23,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 1.0466363134786965,
+    "size": 0.9161068137292137,
+    "sense": 1
+   },
+   "x": 47.52479620506444,
+   "y": 70.26368805885724,
+   "heading": 9.802119487170026
+  },
+  {
+   "id": 52,
+   "parentId": 32,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 0.9927606534812636,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 24.649332888623697,
+   "y": 74.57105385273942,
+   "heading": -7.023062644336936
+  },
+  {
+   "id": 53,
+   "parentId": 38,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 0.9458535018972458
+   },
+   "x": 47.54195163251629,
+   "y": 84.15199523240406,
+   "heading": 2.374110478412223
+  },
+  {
+   "id": 54,
+   "parentId": 41,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 1.3048476661402597,
+    "size": 1,
+    "sense": 1
+   },
+   "x": 9.736683171175157,
+   "y": 10.597944915536278,
+   "heading": -4.6723328401964
+  },
+  {
+   "id": 55,
+   "parentId": 46,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 4,
+   "genes": {
+    "speed": 1.1541795644829724,
+    "size": 0.8891664670850357,
+    "sense": 1.1217339990448179
+   },
+   "x": 89.72995879449967,
+   "y": 14.332891716033313,
+   "heading": -4.669718912663051
+  },
+  {
+   "id": 56,
+   "parentId": 37,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 5,
+   "genes": {
+    "speed": 0.9711098140235369,
+    "size": 1,
+    "sense": 1.1417463241134986
+   },
+   "x": 56.19544429552205,
+   "y": 8.549077555612547,
+   "heading": 4.254552182375767
+  },
+  {
+   "id": 57,
+   "parentId": 42,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 5,
+   "genes": {
+    "speed": 0.8525251457112735,
+    "size": 1.0028941625451764,
+    "sense": 0.9825531536843991
+   },
+   "x": 81.94960883438516,
+   "y": 91.16721032992709,
+   "heading": 3.695683087280423
+  },
+  {
+   "id": 58,
+   "parentId": 49,
+   "name": null,
+   "bornDay": 1,
+   "bornGeneration": 5,
+   "genes": {
+    "speed": 1.003277331450221,
+    "size": 1,
+    "sense": 0.9473241872981157
+   },
+   "x": 18.915168695500398,
+   "y": 48.383356298896324,
+   "heading": 5.1575019811049545
+  }
+ ],
+ "history": [
+  {
+   "day": 1,
+   "generation": 0,
+   "population": 28
+  },
+  {
+   "day": 1,
+   "generation": 1,
+   "population": 20
+  },
+  {
+   "day": 1,
+   "generation": 2,
+   "population": 28
+  },
+  {
+   "day": 1,
+   "generation": 3,
+   "population": 23
+  },
+  {
+   "day": 1,
+   "generation": 4,
+   "population": 17
+  }
+ ],
+ "config": {
+  "seed": 10,
+  "arena": {
+   "width": 100,
+   "height": 100
+  },
+  "day": {
+   "generations": 5,
+   "maxStepsPerGeneration": 1000
+  },
+  "initial": {
+   "count": 20,
+   "genes": {
+    "speed": 1,
+    "size": 1,
+    "sense": 1
+   }
+  },
+  "base": {
+   "speed": 1,
+   "radius": 1.2,
+   "sense": 10,
+   "turnJitter": 0.35
+  },
+  "food": {
+   "initial": 6,
+   "spawnPerStep": 0.09,
+   "spawnWindow": 200,
+   "max": 30,
+   "radius": 0.6
+  },
+  "energy": {
+   "budget": 1000,
+   "costScale": 1
+  },
+  "rules": {
+   "foodToSurvive": 1,
+   "foodToReproduce": 2
+  },
+  "mutation": {
+   "chancePerGene": 0.25,
+   "sd": 0.15,
+   "min": 0.3,
+   "max": 3
+  },
+  "predation": {
+   "enabled": false,
+   "sizeRatio": 1.2,
+   "foodValue": 1
+  },
+  "record": {
+   "decimals": 1
+  }
+ }
+}

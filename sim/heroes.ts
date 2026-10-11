@@ -5,30 +5,22 @@ import type { DayRecording, WorldState } from "./types.ts";
 
 export const HERO_NAMES = ["Gerhard", "Brunhilde", "Heinz", "Ursula", "Klaus", "Erna", "Dieter", "Hilde"];
 
-/** Hâlâ yaşayan isimli bir Krümel yoksa, günün en başarılı soyunu bulup ona isim verir. */
+/** Hâlâ yaşayan isimli bir Krümel yoksa, gün sonunda en büyük yaşayan soyu olan Krümel'e isim verir. */
 export function assignHero(end: WorldState, rec: DayRecording): void {
   const aliveIds = new Set(end.krumels.map((k) => k.id));
   if (end.krumels.some((k) => k.name)) return;
 
+  // Puan: gün sonunda yaşayan soy büyüklüğü (kendisi + yaşayan torunları),
+  // eşitlikte gün içindeki yemek sayısı, sonra küçük id.
   const parentOf = new Map(rec.krumels.map((t) => [t.id, t.parentId]));
-  const rootOf = (id: number): number => {
-    let cur = id;
-    for (;;) {
-      const p = parentOf.get(cur);
-      if (p == null || !parentOf.has(p)) return cur;
-      cur = p;
-    }
-  };
-
-  // Aday: günün başında var olan ve gün sonunda hâlâ yaşayan Krümel'ler.
-  // Puan: gün sonunda yaşayan torun sayısı, sonra toplam yemek, sonra küçük id.
   const score = new Map<number, number>();
   for (const id of aliveIds) {
-    const root = rootOf(id);
-    score.set(root, (score.get(root) ?? 0) + 1);
+    for (let cur: number | null | undefined = id; cur != null && parentOf.has(cur); cur = parentOf.get(cur)) {
+      score.set(cur, (score.get(cur) ?? 0) + 1);
+    }
   }
   const meals = new Map(rec.krumels.map((t) => [t.id, t.meals.length]));
-  const candidates = rec.krumels.filter((t) => t.firstStep === 0 && aliveIds.has(t.id));
+  const candidates = rec.krumels.filter((t) => aliveIds.has(t.id));
   if (candidates.length === 0) return;
   candidates.sort(
     (a, b) =>

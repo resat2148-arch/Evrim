@@ -7,12 +7,23 @@
     "sim:sweep": "tsx sim/sweep.ts",
     "typecheck": "tsc --noEmit",
     "studio": "remotion studio video/index.ts",
-    "render": "remotion render video/index.ts",
-    "still": "remotion still video/index.ts"
+    "render": "remotion render video/index.ts Tag01 out/tag-01.mp4 --codec=h264 --crf=18",
+    "still": "remotion still video/index.ts",
+    "stills": "scripts/render-stills.sh"
   },
   "devDependencies": {
+    "@fontsource/bricolage-grotesque": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
     "@types/node": "^26.6.5",
+    "@types/react": "19.1.12",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.534",
+    "@remotion/fonts": "4.0.534",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "remotion": "4.0.534"
   }
 }

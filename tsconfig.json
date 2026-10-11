@@ -9,7 +9,14 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "jsx": "react-jsx",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["sim", "sim.config.ts"]
+  "include": [
+    "sim",
+    "sim.config.ts",
+    "video",
+    "remotion.config.ts"
+  ]
 }

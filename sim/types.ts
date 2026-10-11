@@ -49,6 +49,8 @@ export type KrumelTrack = {
   name: string | null;
   genes: Genes;
   firstStep: number; // gün içi mutlak adım
+  /** gün içinde doğduysa doğduğu konum (ebeveynin yanında) */
+  born: { x: number; y: number } | null;
   lastStep: number; // son kayıtlı adım (dahil)
   died: { step: number; cause: DeathCause } | null;
   /** [x0,y0,x1,y1,...] firstStep..lastStep */
@@ -73,6 +75,8 @@ export type GenerationSummary = {
   absolute: number; // seri boyunca mutlak nesil
   startStep: number;
   endStep: number; // dahil
+  /** foodGone: yemek bitti · noOneCanEat: herkes doydu ya da enerjisi bitti · timeout: adım sınırı */
+  endReason: "foodGone" | "noOneCanEat" | "timeout";
   popStart: number;
   ate0: number;
   ate1: number;
@@ -95,7 +99,6 @@ export type DayRecording = {
   base: SimConfig["base"];
   foodRadius: number;
   totalSteps: number;
-  stepsPerGeneration: number;
   generations: GenerationSummary[];
   krumels: KrumelTrack[];
   food: FoodRecord[];

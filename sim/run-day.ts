@@ -52,14 +52,15 @@ if (!flags.dry) {
 }
 
 console.log(`Tag ${day} (seed ${start.seed})${event ? ` — Ereignis: ${event.title}` : ""}`);
-console.log("Gen | Start | 0×  1×  2× | tot  geb (mut) | Ende | Futter | ⌀speed ⌀size ⌀sense");
+console.log("Gen | Start | 0×  1×  2× | tot  geb (mut) | Ende | Futter | ⌀speed ⌀size ⌀sense | Schritte");
 for (const g of recording.generations) {
   const m = g.meanGenes;
   console.log(
     `${String(g.absolute + 1).padStart(3)} | ${String(g.popStart).padStart(5)} | ` +
       `${String(g.ate0).padStart(2)}  ${String(g.ate1).padStart(2)}  ${String(g.ate2).padStart(2)} | ` +
       `${String(g.died).padStart(3)}  ${String(g.born).padStart(3)} (${g.mutants}) | ${String(g.popEnd).padStart(4)} | ` +
-      `${g.foodEaten}/${g.foodSpawned} | ${m.speed.toFixed(2)}  ${m.size.toFixed(2)}  ${m.sense.toFixed(2)}`,
+      `${g.foodEaten}/${g.foodSpawned} | ${m.speed.toFixed(2)}  ${m.size.toFixed(2)}  ${m.sense.toFixed(2)} | ` +
+      `${g.endStep - g.startStep + 1} (${g.endReason})`,
   );
 }
 const hero = end.krumels.find((k) => k.name);

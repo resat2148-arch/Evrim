@@ -84,8 +84,8 @@ export function runDay(
   const day = start.day + 1;
   const rng = Rng.fromState(start.rng);
   const { width, height } = config.arena;
-  const S = config.day.stepsPerGeneration;
-  const totalSteps = config.day.generations * S;
+  const maxSteps = config.day.maxStepsPerGeneration;
+  let cursor = 0; // gün içi mutlak adım sayacı
   const dec = 10 ** config.record.decimals;
   const r = (v: number) => Math.round(v * dec) / dec;
 
@@ -104,6 +104,7 @@ export function runDay(
       name: s.name,
       genes: { ...s.genes },
       firstStep,
+      born: firstStep > 0 ? { x: r(s.x), y: r(s.y) } : null,
       lastStep: firstStep,
       died: null,
       track: [],
@@ -131,8 +132,9 @@ export function runDay(
   };
 
   for (let g = 0; g < config.day.generations; g++) {
-    const startStep = g * S;
-    const endStep = startStep + S - 1;
+    const startStep = cursor;
+    let endStep = startStep;
+    let endReason: GenerationSummary["endReason"] = "timeout";
     const absolute = start.generationsSoFar + g;
     const popStart = krumels.length;
     let foodSpawned = 0;
@@ -149,11 +151,12 @@ export function runDay(
       foodSpawned++;
     }
 
-    for (let step = startStep; step <= endStep; step++) {
-      // Yemek belirir
+    // Nesil, yemek tükenene kadar sürer (ya da kimse yiyemez hale gelene kadar)
+    for (let step = startStep; ; step++) {
+      // Yemek belirir (yalnızca spawnWindow içinde)
       const rate = config.food.spawnPerStep;
       let n = Math.floor(rate) + (rng.next() < rate - Math.floor(rate) ? 1 : 0);
-      while (n-- > 0 && food.length < config.food.max) {
+      while (n-- > 0 && food.length < config.food.max && step - startStep < config.food.spawnWindow) {
         spawnFood(step);
         foodSpawned++;
       }
@@ -264,7 +267,23 @@ export function runDay(
         k.rec.lastStep = step;
       }
       population.push(alive);
+
+      // Nesil bitti mi?
+      endStep = step;
+      if (step - startStep + 1 >= config.food.spawnWindow && food.length === 0) {
+        endReason = "foodGone";
+        break;
+      }
+      const canStillEat = krumels.some(
+        (k) => k.alive && k.eaten < config.rules.foodToReproduce && k.energy > 0,
+      );
+      if (!canStillEat) {
+        endReason = "noOneCanEat";
+        break;
+      }
+      if (step - startStep + 1 >= maxSteps) break;
     }
+    cursor = endStep + 1;
 
     // Nesil sonu: kalan yemek temizlenir
     for (const f of food) f.rec.gone = endStep;
@@ -332,6 +351,7 @@ export function runDay(
       absolute,
       startStep,
       endStep,
+      endReason,
       popStart,
       ate0,
       ate1,
@@ -347,7 +367,6 @@ export function runDay(
 
     if (krumels.length === 0) {
       // Nesil yok oldu: kalan nesiller boş geçer
-      for (let rest = endStep + 1; rest < totalSteps; rest++) population.push(0);
       break;
     }
   }
@@ -392,8 +411,7 @@ export function runDay(
     arena: { width, height },
     base: config.base,
     foodRadius: config.food.radius,
-    totalSteps,
-    stepsPerGeneration: S,
+    totalSteps: cursor,
     generations,
     krumels: tracks,
     food: foods,

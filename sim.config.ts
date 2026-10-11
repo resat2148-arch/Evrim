@@ -4,13 +4,14 @@
 
 export const simConfig = {
   /** Varsayılan seed (CLI'den --seed ile değiştirilebilir) */
-  seed: 7,
+  seed: 10,
 
   /** 2D arena, birim cinsinden (render'da kareye ölçeklenir) */
   arena: { width: 100, height: 100 },
 
-  /** Bir "Tag" (bölüm) kaç nesil, her nesil kaç adım */
-  day: { generations: 5, stepsPerGeneration: 200 },
+  /** Bir "Tag" (bölüm) kaç nesil. Her nesil yemek tükenene kadar sürer
+   *  (ya da herkes doyana/enerjisi bitene kadar); güvenlik için adım sınırı var. */
+  day: { generations: 5, maxStepsPerGeneration: 1000 },
 
   /** Tag 1 başlangıcı: özdeş Krümel'ler */
   initial: {
@@ -27,14 +28,16 @@ export const simConfig = {
   },
 
   food: {
-    initial: 8, // her neslin başında arenada olan yemek
-    spawnPerStep: 0.1, // adım başına beklenen yeni yemek
+    initial: 6, // neslin başında hazır olan yemek
+    spawnPerStep: 0.09, // ilk spawnWindow adımda, adım başına bu olasılıkla yeni yemek
+    spawnWindow: 200, // bu adımdan sonra yeni yemek çıkmaz; nesil kalan yemek bitince sona erer
+    // → nesil başına beklenen yemek ≈ initial + spawnPerStep × spawnWindow (kıtlığın ayarı)
     max: 30, // aynı anda en fazla yemek
     radius: 0.6,
   },
 
   energy: {
-    budget: 260, // her nesil başında dolan enerji
+    budget: 1000, // her nesil başında dolan enerji
     // hareket maliyeti / adım = costScale × (size³ × speed² + sense)
     costScale: 1.0,
   },
