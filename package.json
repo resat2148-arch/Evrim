@@ -1,0 +1,18 @@
+{
+  "name": "kruemel-evolution",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sim:day": "tsx sim/run-day.ts",
+    "sim:sweep": "tsx sim/sweep.ts",
+    "typecheck": "tsc --noEmit",
+    "studio": "remotion studio video/index.ts",
+    "render": "remotion render video/index.ts",
+    "still": "remotion still video/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
