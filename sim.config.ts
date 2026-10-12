@@ -27,11 +27,36 @@ export const simConfig = {
     turnJitter: 0.35, // rastgele dolaşırken yön değişimi (radyan, std)
   },
 
+  /** Dünya: besin haritası + yemeği üreten alg kolonileri. Dünya da Krümel'lerle birlikte değişir:
+   *  otlanan koloni küçülür/ölür, ölen Krümel toprağı gübreler, besinli yerde yeni koloni filizlenir. */
+  world: {
+    grid: 10, // besin haritası: 10×10 kare
+    nutrientBase: 0.45, // besinin zamanla döndüğü denge seviyesi
+    nutrientRegen: 0.12, // nesil başına dengeye dönüş oranı
+    diffusion: 0.2, // nesil başına komşu karelere yayılma
+    initialColonies: 3,
+    colonyRadius: 3.5, // yemek koloninin bu yarıçapı içinde belirir
+    emitPerStep: 0.02, // adım başına, biyokütle başına yemek çıkarma olasılığı
+    grazeCost: 0.18, // koloniden yenen her yemek biyokütleden bu kadar götürür
+    growth: 0.9, // nesil sonu büyüme hızı (besin × biyokütle × (1 − b/max))
+    maxBiomass: 2.5,
+    nutrientUse: 0.25, // 1 biyokütle büyümek için harcanan besin
+    decay: 0.08, // nesil başına doğal çürüme (yarısı toprağa döner)
+    minBiomass: 0.2, // bunun altına düşen koloni ölür
+    deathNutrient: 0.5, // açlıktan ölen bir Krümel karesine bu kadar besin bırakır
+    sproutThreshold: 0.85, // bu besinin üstündeki karede yeni koloni filizlenebilir
+    sproutChance: 0.5,
+    sproutBiomass: 0.5,
+    spreadAt: 2.4, // bu biyokütlenin üstündeki koloni spor saçabilir
+    spreadChance: 0.35,
+    minDistance: 7, // koloniler arası en az mesafe
+    maxColonies: 6,
+  },
+
   food: {
-    initial: 2, // neslin başında hazır olan yemek
-    spawnPerStep: 0.05, // ilk spawnWindow adımda, adım başına bu olasılıkla yeni yemek
-    spawnWindow: 120, // bu adımdan sonra yeni yemek çıkmaz; nesil kalan yemek bitince sona erer
-    // → nesil başına beklenen yemek ≈ initial + spawnPerStep × spawnWindow (kıtlığın ayarı)
+    initial: 2, // neslin başında rastgele yerlerde sürüklenen parçalar
+    spawnWindow: 120, // koloniler yalnızca ilk spawnWindow adımda yemek çıkarır; nesil kalan yemek bitince sona erer
+    // → nesil başına beklenen yemek ≈ initial + emitPerStep × toplam biyokütle × spawnWindow
     max: 30, // aynı anda en fazla yemek
     radius: 0.6,
   },

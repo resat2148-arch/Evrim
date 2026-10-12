@@ -15,10 +15,27 @@ export class Day {
   readonly byId: Map<number, Track>;
   readonly hero: Track | null;
 
+  /** koloni id → o koloniden çıkan yemeklerin yendiği adımlar (otlanma) */
+  readonly grazeSteps: Map<number, number[]>;
+
   constructor(rec: DayRecording) {
     this.rec = rec;
     this.byId = new Map(rec.krumels.map((k) => [k.id, k]));
     this.hero = rec.krumels.find((k) => k.name) ?? null;
+    this.grazeSteps = new Map();
+    for (const f of rec.food) {
+      if (f.colony == null || f.eatenBy == null || f.gone == null) continue;
+      const arr = this.grazeSteps.get(f.colony) ?? [];
+      arr.push(f.gone);
+      this.grazeSteps.set(f.colony, arr);
+    }
+  }
+
+  /** s adımına kadar bu nesilde koloniden yenen yemek sayısı */
+  grazedBy(colonyId: number, from: number, to: number): number {
+    let c = 0;
+    for (const g of this.grazeSteps.get(colonyId) ?? []) if (g >= from && g <= to) c++;
+    return c;
   }
 
   private nPos(k: Track) {

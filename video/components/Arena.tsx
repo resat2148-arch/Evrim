@@ -3,9 +3,10 @@
 import React from "react";
 import { random } from "remotion";
 import type { Day } from "../data.ts";
-import type { CellView, FoodView } from "../scene.ts";
+import type { CellView, FoodView, WorldView } from "../scene.ts";
 import { ARENA, C, CELL_VIS, FONT_DISPLAY, FONT_MONO, FOOD_VIS_R } from "../theme.ts";
 import { Cell } from "./Cell.tsx";
+import { World, WorldDefs } from "./World.tsx";
 
 const Bokeh: React.FC<{ frame: number }> = ({ frame }) => {
   const S = ARENA.size;
@@ -49,8 +50,10 @@ export const Arena: React.FC<{
   step: number;
   heroVisible: number; // 0..1
   focus?: { id: number; alpha: number } | null; // altyazıda adı geçen hücre
+  focusColony?: { id: number; alpha: number; label: string } | null; // altyazıda adı geçen koloni
+  world: WorldView;
   dim?: number;
-}> = ({ day, cells, food, frame, step, heroVisible, focus, dim = 0 }) => {
+}> = ({ day, cells, food, frame, step, heroVisible, focus, focusColony, world, dim = 0 }) => {
   const S = ARENA.size;
   // Duvara değen hücreler kesilmesin: dünya, kenarlardan PAD kadar içeride çizilir
   const PAD = 44;
@@ -64,6 +67,7 @@ export const Arena: React.FC<{
     <div style={{ position: "absolute", left: ARENA.x, top: ARENA.y, width: S, height: S, borderRadius: 46, overflow: "hidden", boxShadow: `0 0 0 4px #17322c, 0 0 80px rgba(60,160,140,0.18)` }}>
       <svg width={S} height={S} viewBox={`0 0 ${S} ${S}`} style={{ display: "block" }}>
         <defs>
+          <WorldDefs />
           <radialGradient id="field" cx="50%" cy="48%" r="70%">
             <stop offset="0%" stopColor="#0f2a26" />
             <stop offset="60%" stopColor="#081a17" />
@@ -91,6 +95,7 @@ export const Arena: React.FC<{
         <rect width={S} height={S} fill="url(#field)" />
         <Bokeh frame={frame} />
         <g transform={`translate(${PAD} ${PAD})`}>
+        <World world={world} px={px} size={S - 2 * PAD} frame={frame} colonyRadius={day.rec.env.colonyRadius} />
         {food.map((f) => (
           <Food key={f.id} f={f} px={px} frame={frame} />
         ))}
@@ -116,6 +121,23 @@ export const Arena: React.FC<{
             </g>
           </g>
         )}
+        {(() => {
+          const fc = focusColony ? world.colonies.find((c) => c.id === focusColony.id) : undefined;
+          if (!fc || !focusColony) return null;
+          const rr = day.rec.env.colonyRadius * px * 1.05 + 4 * Math.sin(frame / 4);
+          const top = fc.y * px + PAD < 130;
+          return (
+            <g transform={`translate(${fc.x * px} ${fc.y * px})`} opacity={focusColony.alpha}>
+              <circle r={rr} fill="none" stroke={C.green} strokeWidth={4} strokeDasharray="10 8" />
+              <g transform={`translate(${Math.max(130 - PAD - fc.x * px, Math.min(S - PAD - 130 - fc.x * px, 0))} ${top ? rr + 40 : -(rr + 22)})`}>
+                <rect x={-120} y={-28} width={240} height={46} rx={23} fill="rgba(10,20,18,0.85)" stroke={C.green} strokeWidth={2.5} />
+                <text y={6} textAnchor="middle" fill={C.green} style={{ font: `800 27px "${FONT_DISPLAY}"` }}>
+                  {focusColony.label}
+                </text>
+              </g>
+            </g>
+          );
+        })()}
         {focused && focus && (
           <g transform={`translate(${focused.x * px} ${focused.y * px})`} opacity={focus.alpha}>
             <circle r={baseR * focused.k.genes.size * focused.scale + 20 + 4 * Math.sin(frame / 4)} fill="none" stroke="#ffffff" strokeWidth={4} />

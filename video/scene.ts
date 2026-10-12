@@ -22,6 +22,65 @@ export type CellView = {
 
 export type FoodView = { id: number; x: number; y: number; scale: number };
 
+export type ColonyView = {
+  id: number;
+  x: number;
+  y: number;
+  biomass: number;
+  alpha: number;
+  sprout: number; // 0..1 filizlenme (yeni koloni)
+  wither: number; // 0..1 ölüm (abgegrast)
+};
+
+export type WorldView = {
+  nutrients: number[];
+  grid: number;
+  colonies: ColonyView[];
+  deposits: { x: number; y: number; t: number }[]; // ölen Krümel'in toprağa karışması
+};
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+/** Dünyanın o karedeki hâli: besin haritası, koloniler, çürüyen bedenler */
+export function worldAt(day: Day, fs: FrameState): WorldView {
+  const env = day.rec.env;
+  const gens = day.rec.generations;
+  const kind = fs.seg.kind;
+  const gi = kind === "intro" ? 0 : fs.gen;
+  const eg = env.generations[gi];
+  const g = gens[gi];
+  const out: WorldView = { nutrients: eg.nutrientsStart, grid: env.grid, colonies: [], deposits: [] };
+
+  if (kind === "intro" || kind === "move") {
+    for (const c of eg.colonies) {
+      if (c.fate === "new") continue;
+      const eaten = kind === "move" ? day.grazedBy(c.id, g.startStep, Math.floor(fs.step)) : 0;
+      const b = Math.max(c.grazed, c.start - env.grazeCost * eaten);
+      out.colonies.push({ id: c.id, x: c.x, y: c.y, biomass: b, alpha: 1, sprout: 1, wither: 0 });
+    }
+    return out;
+  }
+
+  // Seçilim: toprak gübrelenir, koloniler büyür/ölür, yenileri filizlenir
+  const t = kind === "sel" ? fs.t : 1;
+  const soil = ease(clamp01((t - 0.15) / 0.75));
+  out.nutrients = eg.nutrientsStart.map((v, i) => lerp(v, eg.nutrientsEnd[i], soil));
+  const grow = ease(clamp01((t - 0.3) / 0.6));
+  for (const c of eg.colonies) {
+    if (c.fate === "alive") {
+      out.colonies.push({ id: c.id, x: c.x, y: c.y, biomass: lerp(c.grazed, c.end, grow), alpha: 1, sprout: 1, wither: 0 });
+    } else if (c.fate === "died") {
+      const w = ease(clamp01((t - 0.2) / 0.6));
+      if (w < 1) out.colonies.push({ id: c.id, x: c.x, y: c.y, biomass: Math.max(0.15, c.grazed), alpha: 1 - w, sprout: 1, wither: w });
+    } else {
+      const sp = ease(clamp01((t - 0.45) / 0.5));
+      if (sp > 0) out.colonies.push({ id: c.id, x: c.x, y: c.y, biomass: c.end, alpha: 1, sprout: sp, wither: 0 });
+    }
+  }
+  if (kind === "sel") for (const d of eg.deposits) out.deposits.push({ ...d, t: clamp01((t - 0.1) / 0.9) });
+  return out;
+}
+
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const ease = (v: number) => (v < 0.5 ? 2 * v * v : 1 - (-2 * v + 2) ** 2 / 2);
 

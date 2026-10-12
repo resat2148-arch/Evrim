@@ -20,10 +20,25 @@ export const PopulationGraph: React.FC<{ rec: DayRecording; step: number; alive:
   d += `L${sx(upto).toFixed(1)},${sy(rec.population[upto]).toFixed(1)}`;
   const area = `${d}L${sx(upto)},${sy(0)}L${sx(0)},${sy(0)}Z`;
   const ticks = Array.from({ length: Math.floor(ymax / tickStep) + 1 }, (_, i) => i * tickStep);
+  // Alg kolonisi sayısı: nesil başında, seçilimden sonra değişir
+  const env = rec.env.generations;
+  const colAt = (gi: number, after: boolean) => env[gi].colonies.filter((c) => (after ? c.fate !== "died" : c.fate !== "new")).length;
+  const gNow = rec.generations.findIndex((g) => step <= g.endStep);
+  const curGen = gNow === -1 ? rec.generations.length - 1 : gNow;
+  const atEnd = step >= rec.generations[curGen].endStep;
+  const colonies = colAt(curGen, atEnd && step >= rec.generations[rec.generations.length - 1].endStep ? true : false);
+  let cd = "";
+  rec.generations.forEach((g, i) => {
+    if (g.startStep > upto) return;
+    const y = sy(colAt(i, false));
+    cd += `${cd ? "L" : "M"}${sx(g.startStep).toFixed(1)},${y.toFixed(1)}L${sx(Math.min(upto, g.endStep)).toFixed(1)},${y.toFixed(1)}`;
+  });
 
   return (
     <div style={{ position: "absolute", left: x, top: y, width: w, height: h, background: C.panel, borderRadius: 28, border: `2px solid ${C.line}` }}>
-      <div style={{ position: "absolute", left: 26, top: 16, color: C.inkDim, font: `600 24px "${FONT_MONO}"`, letterSpacing: 2 }}>KRÜMEL</div>
+      <div style={{ position: "absolute", left: 26, top: 16, color: C.inkDim, font: `600 24px "${FONT_MONO}"`, letterSpacing: 2 }}>
+        <span style={{ color: C.amber }}>━</span> KRÜMEL <span style={{ color: C.green, marginLeft: 14 }}>━ ALGEN {colonies}</span>
+      </div>
       <div style={{ position: "absolute", right: 24, top: 2, color: C.ink, font: `800 60px "${FONT_DISPLAY}"`, fontVariantNumeric: "tabular-nums" }}>{alive}</div>
       <svg width={w} height={h} style={{ position: "absolute", inset: 0 }}>
         {ticks.map((v) => (
@@ -44,6 +59,7 @@ export const PopulationGraph: React.FC<{ rec: DayRecording; step: number; alive:
         ))}
         <path d={area} fill="rgba(242,179,71,0.14)" />
         <path d={d} fill="none" stroke={C.amber} strokeWidth={4} strokeLinejoin="round" />
+        {cd && <path d={cd} fill="none" stroke={C.green} strokeWidth={4} strokeLinejoin="round" />}
         <circle cx={sx(upto)} cy={sy(rec.population[upto])} r={8} fill={C.amber} stroke="#1a1206" strokeWidth={3} />
       </svg>
     </div>

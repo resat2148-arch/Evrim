@@ -34,10 +34,11 @@ export const ResultCard: React.FC<{
   endPop: number;
   speedEnd: number;
   mutantsAlive: number;
+  colonies: [number, number];
   heroLine: string | null;
   frame: number;
   len: number;
-}> = ({ day, startPop, endPop, speedEnd, mutantsAlive, heroLine, frame, len }) => {
+}> = ({ day, startPop, endPop, speedEnd, mutantsAlive, colonies, heroLine, frame, len }) => {
   const o = fade(frame, len, 8, 6);
   const pop = spring({ frame, fps: FPS, config: { damping: 14 } });
   const pct = Math.round((speedEnd - 1) * 100);
@@ -56,6 +57,7 @@ export const ResultCard: React.FC<{
       <div style={{ color: C.inkDim, font: `600 34px "${FONT_MONO}"`, marginBottom: 20 }}>Krümel nach 5 Generationen</div>
       {row("⌀ Tempo", `${de(1)} → ${de(speedEnd)} (${pct >= 0 ? "+" : ""}${pct} %)`)}
       {row("Mutanten am Leben", `${mutantsAlive} von ${endPop}`)}
+      {row("Algenkolonien", `${colonies[0]} → ${colonies[1]}`)}
       {heroLine && row("Gerhard", heroLine)}
     </div>
   );

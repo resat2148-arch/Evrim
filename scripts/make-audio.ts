@@ -212,6 +212,21 @@ for (const [gi, g] of rec.generations.entries()) {
   });
 }
 
+// Dünya: yeni alg kolonisi filizlenince yükselen çan, abgegrast olunca boğuk düşüş
+for (const [gi, eg] of rec.env.generations.entries()) {
+  const sel = segOf("sel", gi);
+  const t0 = sec(sel.from);
+  const selDur = sec(sel.len);
+  for (const c of eg.colonies) {
+    const pan = (c.x / W) * 1.6 - 0.8;
+    if (c.fate === "new") {
+      [79, 86].forEach((m, i) => voice(sfx, t0 + selDur * 0.55 + i * 0.09, 1.4, () => midi(m), adsr(0.003, 0.35), 0.06, pan, [1, 0, 0.3, 0, 0.1]));
+    } else if (c.fate === "died") {
+      voice(sfx, t0 + selDur * 0.25, 0.9, (t) => 180 * Math.exp(-t / 0.35) + 55, adsr(0.01, 0.3), 0.12, pan, [1, 0.2]);
+    }
+  }
+}
+
 // Altyazı geçişleri: hafif "whoosh"
 for (const s of segments) {
   if (s.kind === "move" || s.kind === "result") noise(sfx, sec(s.from) - 0.05, 0.35, (t) => Math.sin(Math.PI * Math.min(1, t / 0.35)) ** 2, 0.035, 0, 0.2);

@@ -3,9 +3,12 @@
 // Çıktı: gün sonu state'i + render için adım adım kayıt.
 
 import type { SimConfig } from "../sim.config.ts";
+import { createEnv, emitPosition, endOfGeneration } from "./environment.ts";
 import { Rng } from "./rng.ts";
 import type {
+  Colony,
   DayEvent,
+  EnvGeneration,
   DayRecording,
   FoodRecord,
   GenerationSummary,
@@ -24,7 +27,7 @@ type Krumel = KrumelState & {
   rec: KrumelTrack;
 };
 
-type Food = { id: number; x: number; y: number; rec: FoodRecord };
+type Food = { id: number; x: number; y: number; colony: number | null; rec: FoodRecord };
 
 export function deepMerge<T>(base: T, overrides: Record<string, unknown> | undefined): T {
   if (!overrides) return structuredClone(base);
@@ -57,10 +60,12 @@ export function createInitialState(config: SimConfig, seed: number): WorldState 
       heading: rng.range(0, Math.PI * 2),
     });
   }
+  const env = createEnv(config, rng);
   return {
     version: 1,
     day: 0,
     seed,
+    env,
     rng: rng.getState(),
     nextKrumelId: config.initial.count + 1,
     nextFoodId: 1,
@@ -117,16 +122,17 @@ export function runDay(
 
   let krumels: Krumel[] = start.krumels.map((k) => makeKrumel(k, 0, null));
   let food: Food[] = [];
+  const env = structuredClone(start.env);
+  const envGens: EnvGeneration[] = [];
 
-  const spawnFood = (step: number) => {
+  // Yemek: koloniden çıkar (koloni yakınında) ya da rastgele sürüklenen bir parçadır
+  const spawnFood = (step: number, colony: Colony | null = null) => {
     const margin = 2;
-    const f: Food = {
-      id: nextFoodId++,
-      x: rng.range(margin, width - margin),
-      y: rng.range(margin, height - margin),
-      rec: null as unknown as FoodRecord,
-    };
-    f.rec = { id: f.id, x: r(f.x), y: r(f.y), spawn: step, gone: null, eatenBy: null };
+    const [x, y] = colony
+      ? emitPosition(colony, config.world, config, rng)
+      : [rng.range(margin, width - margin), rng.range(margin, height - margin)];
+    const f: Food = { id: nextFoodId++, x, y, colony: colony?.id ?? null, rec: null as unknown as FoodRecord };
+    f.rec = { id: f.id, x: r(f.x), y: r(f.y), spawn: step, gone: null, eatenBy: null, colony: f.colony };
     foods.push(f.rec);
     food.push(f);
   };
@@ -150,15 +156,20 @@ export function runDay(
       spawnFood(startStep);
       foodSpawned++;
     }
+    const nutrientsStart = env.nutrients.slice();
+    const coloniesStart = env.colonies.map((c) => ({ ...c }));
 
     // Nesil, yemek tükenene kadar sürer (ya da kimse yiyemez hale gelene kadar)
     for (let step = startStep; ; step++) {
       // Yemek belirir (yalnızca spawnWindow içinde)
-      const rate = config.food.spawnPerStep;
-      let n = Math.floor(rate) + (rng.next() < rate - Math.floor(rate) ? 1 : 0);
-      while (n-- > 0 && food.length < config.food.max && step - startStep < config.food.spawnWindow) {
-        spawnFood(step);
-        foodSpawned++;
+      if (step - startStep < config.food.spawnWindow) {
+        for (const c of env.colonies) {
+          if (food.length >= config.food.max) break;
+          if (rng.next() < config.world.emitPerStep * c.biomass) {
+            spawnFood(step, c);
+            foodSpawned++;
+          }
+        }
       }
 
       const order = rng.shuffle(krumels.filter((k) => k.alive));
@@ -232,6 +243,9 @@ export function runDay(
               food.splice(i, 1);
               f.rec.gone = step;
               f.rec.eatenBy = k.id;
+              // Otlanma: yemeğin çıktığı koloni küçülür
+              const col = f.colony != null ? env.colonies.find((c) => c.id === f.colony) : undefined;
+              if (col) col.biomass = Math.max(0, col.biomass - config.world.grazeCost);
               k.eaten++;
               k.rec.meals.push(step);
               foodEaten++;
@@ -297,6 +311,7 @@ export function runDay(
     let mutants = 0;
     const survivors: Krumel[] = [];
     const children: Krumel[] = [];
+    const deaths: { x: number; y: number }[] = [];
     for (const k of krumels) {
       if (!k.alive) {
         died++; // nesil içinde avlandı
@@ -309,6 +324,7 @@ export function runDay(
       if (k.eaten < config.rules.foodToSurvive) {
         k.alive = false;
         k.rec.died = { step: endStep, cause: "starved" };
+        deaths.push({ x: k.x, y: k.y });
         died++;
         continue;
       }
@@ -348,6 +364,9 @@ export function runDay(
       }
     }
     krumels = [...survivors, ...children];
+
+    // Dünya da nesil sonunda değişir
+    envGens.push(endOfGeneration(env, config, rng, absolute, nutrientsStart, coloniesStart, deaths));
 
     const mean = (key: keyof Genes) =>
       krumels.length ? krumels.reduce((s, k) => s + k.genes[key], 0) / krumels.length : 0;
@@ -390,6 +409,7 @@ export function runDay(
     nextKrumelId,
     nextFoodId,
     generationsSoFar: start.generationsSoFar + generations.length,
+    env,
     krumels: krumels.map((k) => ({
       id: k.id,
       parentId: k.parentId,
@@ -420,6 +440,7 @@ export function runDay(
     generations,
     krumels: tracks,
     food: foods,
+    env: { grid: env.grid, grazeCost: config.world.grazeCost, colonyRadius: config.world.colonyRadius, generations: envGens },
     population,
   };
 

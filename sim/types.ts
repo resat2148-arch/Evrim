@@ -16,6 +16,17 @@ export type KrumelState = {
   heading: number;
 };
 
+/** Alg kolonisi: yemeğin kaynağı. Büyür, otlanır, ölür, yenileri filizlenir. */
+export type Colony = { id: number; x: number; y: number; biomass: number; bornGeneration: number };
+
+/** Hücrelerin yaşadığı dünya: besin haritası + alg kolonileri */
+export type EnvState = {
+  grid: number; // kenar başına kare sayısı
+  nutrients: number[]; // grid×grid, satır satır
+  colonies: Colony[];
+  nextColonyId: number;
+};
+
 /** state/day-XX-end.json */
 export type WorldState = {
   version: 1;
@@ -26,6 +37,7 @@ export type WorldState = {
   nextFoodId: number;
   generationsSoFar: number;
   krumels: KrumelState[];
+  env: EnvState;
   /** Gün başına nesil sonu nüfusları (seri geçmişi) */
   history: { day: number; generation: number; population: number }[];
   config: SimConfig;
@@ -68,6 +80,27 @@ export type FoodRecord = {
   spawn: number;
   gone: number | null; // yendiği adım ya da nesil sonunda temizlendiği adım
   eatenBy: number | null;
+  colony: number | null; // hangi koloniden çıktı (null = sürüklenen parça)
+};
+
+/** Bir nesilde dünyada ne oldu (render için) */
+export type EnvGeneration = {
+  nutrientsStart: number[];
+  nutrientsEnd: number[];
+  /** nesil boyunca var olan ve nesil sonunda yeni çıkan koloniler */
+  colonies: {
+    id: number;
+    x: number;
+    y: number;
+    start: number; // nesil başı biyokütle (yeni koloni: 0)
+    grazed: number; // nesil içinde otlanmadan sonra
+    end: number; // büyüme/çürüme sonrası (ölen: 0)
+    fate: "alive" | "died" | "new";
+    cause?: "detritus" | "nutrients" | "spores"; // yeni kolonilerde
+    parent?: number; // spor ile yayıldıysa
+  }[];
+  /** ölen Krümel'lerin toprağa karıştığı yerler */
+  deposits: { x: number; y: number }[];
 };
 
 export type GenerationSummary = {
@@ -102,6 +135,7 @@ export type DayRecording = {
   generations: GenerationSummary[];
   krumels: KrumelTrack[];
   food: FoodRecord[];
+  env: { grid: number; grazeCost: number; colonyRadius: number; generations: EnvGeneration[] };
   /** her adımın sonunda canlı sayısı */
   population: number[];
 };

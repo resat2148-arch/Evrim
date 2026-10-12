@@ -5,7 +5,7 @@ import type { Day, Track } from "./data.ts";
 import { de } from "./theme.ts";
 import type { FrameState } from "./timeline.ts";
 
-export type Caption = { text: string; sub?: string; tone?: "red" | "green" | "amber"; focusId?: number };
+export type Caption = { text: string; sub?: string; tone?: "red" | "green" | "amber"; focusId?: number; focusColony?: number; focusLabel?: string };
 
 type Facts = ReturnType<typeof computeFacts>;
 
@@ -41,7 +41,13 @@ export function computeFacts(day: Day) {
   const startPop = gens[0].popStart;
   const meanSpeedEnd = last.meanGenes.speed;
 
+  const envGens = rec.env.generations;
+  const coloniesStart = envGens[0]?.colonies.filter((c) => c.fate !== "new").length ?? 0;
+  const coloniesEnd = envGens[envGens.length - 1]?.colonies.filter((c) => c.fate !== "died").length ?? 0;
+
   return {
+    coloniesStart,
+    coloniesEnd,
     gens,
     hero,
     heroParent,
@@ -85,29 +91,53 @@ function moveBeats(day: Day, f: Facts, gen: number, statShownAt: number): Captio
     top && top.meals >= 3 && top.k.id !== f.hero?.id
       ? { text: `Krümel #${top.k.id} frisst *${top.meals}×*: das gibt *${top.meals - 1}* Kinder!`, focusId: top.k.id }
       : null;
+  const env = day.rec.env.generations;
   if (gen === 0) {
+    const biggest = [...env[0].colonies].sort((a, b) => b.start - a.start)[0];
     return [
       { text: "Wer nicht frisst, *stirbt*." },
       { text: "Jedes weitere Futter: ein *Kind* mehr." },
-      champion ?? { text: `*${g.foodSpawned}* Futterstücke. Wer zuerst kommt, frisst.` },
+      biggest
+        ? { text: "Futter wächst nur an den *Algen*.", tone: "green", focusColony: biggest.id, focusLabel: "Algen" }
+        : champion ?? { text: `*${g.foodSpawned}* Futterstücke. Wer zuerst kommt, frisst.` },
     ];
   }
+  // Dünya: önceki neslin sonunda neler değişti?
+  const world: Caption[] = [];
+  const prev = env[gen - 1];
+  for (const c of prev.colonies.filter((c) => c.fate === "new")) {
+    const text =
+      c.cause === "detritus"
+        ? "Wo Krümel starben, wachsen *neue Algen*."
+        : c.cause === "spores"
+          ? "Die Algen *breiten sich aus*."
+          : "Auf fruchtbarem Boden wächst eine *neue Kolonie*.";
+    world.push({ text, tone: "green", focusColony: c.id, focusLabel: "Neue Algen" });
+  }
+  const gone = prev.colonies.filter((c) => c.fate === "died").length;
+  if (gone) world.push({ text: gone === 1 ? "Eine Algenkolonie wurde *abgegrast*." : `*${gone}* Algenkolonien wurden abgegrast.`, tone: "red" });
+  const hero: Caption[] = [];
   const beats: Caption[] = [];
   if (f.hero && gen === f.heroBornGen) {
-    beats.push({ text: `Neu geboren: *${name}*.` });
+    hero.push({ text: `Neu geboren: *${name}*.` });
     const pct = heroPct(f);
-    if (f.hero.mutation && pct && pct > 0) beats.push({ text: `*${pct} %* schneller als seine Eltern.` });
+    if (f.hero.mutation && pct && pct > 0) hero.push({ text: `*${pct} %* schneller als seine Eltern.` });
   }
   const kids = f.heroKids.filter((k) => k.firstStep === g.startStep);
   if (f.hero && kids.length) {
-    beats.push({ text: `*${name}* hat *${kids.length}* ${kidsWord(kids.length)} bekommen.` });
+    hero.push({ text: `*${name}* hat *${kids.length}* ${kidsWord(kids.length)} bekommen.` });
     const fastest = kids.reduce((a, b) => (b.genes.speed > a.genes.speed ? b : a));
     const pct = Math.round((fastest.genes.speed / f.hero.genes.speed - 1) * 100);
-    if (pct >= 10) beats.push({ text: `Eins davon ist *${pct} %* schneller.`, focusId: fastest.id });
+    if (pct >= 10) hero.push({ text: `Eins davon ist *${pct} %* schneller.`, focusId: fastest.id });
   }
   if (f.hero && gen >= f.heroBornGen && day.aliveAt(f.hero, g.endStep)) {
     const m = day.mealsBetween(f.hero, g.startStep, g.endStep);
-    if (m >= 2) beats.push({ text: `*${name}* frisst *${m}×* in dieser Generation.` });
+    if (m >= 2) hero.push({ text: `*${name}* frisst *${m}×* in dieser Generation.` });
+  }
+  // Kahraman ve dünya dönüşümlü; sonra diğerleri
+  for (let i = 0; i < Math.max(hero.length, world.length); i++) {
+    if (hero[i]) beats.push(hero[i]);
+    if (world[i]) beats.push(world[i]);
   }
   if (champion) beats.push(champion);
   if (gen === statShownAt) {

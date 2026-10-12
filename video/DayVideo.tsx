@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { AbsoluteFill, Audio, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { Day, RECORDINGS } from "./data.ts";
 import { makeNarrative } from "./narrative.ts";
-import { sceneAt } from "./scene.ts";
+import { sceneAt, worldAt } from "./scene.ts";
 import { ARENA, C, loadFonts } from "./theme.ts";
 import { buildTimeline, frameState } from "./timeline.ts";
 import { Arena } from "./components/Arena.tsx";
@@ -27,6 +27,7 @@ export const DayVideo: React.FC<DayVideoProps> = ({ day: dayNo }) => {
   const rec = day.rec;
   const fs = frameState(rec, timeline.segments, frame);
   const scene = sceneAt(day, fs);
+  const world = worldAt(day, fs);
   const f = narrative.facts;
   const kind = fs.seg.kind;
   const segFrame = fs.local;
@@ -39,6 +40,7 @@ export const DayVideo: React.FC<DayVideoProps> = ({ day: dayNo }) => {
   const dim = kind === "intro" ? 0.5 * (1 - interpolate(segFrame, [70, 90], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })) : kind === "result" || kind === "vote" ? Math.min(0.6, (frame - (timeline.segments.find((s) => s.kind === "result")!.from)) / 12 * 0.6) : 0;
 
   const cap = narrative.captionAt(fs);
+  const capAlpha = cap ? interpolate(frame, [cap.start, cap.start + 8, cap.end - 6, cap.end], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 0;
   const heroAlive = f.hero ? !f.hero.died : false;
   const heroLine = f.hero && heroAlive ? `überlebt · ${f.heroKids.length} ${f.heroKids.length === 1 ? "Kind" : "Kinder"}` : null;
   const panelTop = ARENA.y + ARENA.size + 30;
@@ -55,7 +57,9 @@ export const DayVideo: React.FC<DayVideoProps> = ({ day: dayNo }) => {
         frame={frame}
         step={fs.step}
         heroVisible={kind === "vote" ? 0 : heroVisible}
-        focus={cap?.focusId != null ? { id: cap.focusId, alpha: interpolate(frame, [cap.start, cap.start + 8, cap.end - 6, cap.end], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) } : null}
+        focus={cap?.focusId != null ? { id: cap.focusId, alpha: capAlpha } : null}
+        focusColony={cap?.focusColony != null ? { id: cap.focusColony, alpha: capAlpha, label: cap.focusLabel ?? "Algen" } : null}
+        world={world}
         dim={dim}
       />
 
@@ -69,12 +73,12 @@ export const DayVideo: React.FC<DayVideoProps> = ({ day: dayNo }) => {
 
       {kind === "intro" && (
         <div style={{ position: "absolute", left: ARENA.x, top: ARENA.y, width: ARENA.size, height: ARENA.size }}>
-          <DayCounter day={rec.day} line={`${f.startPop} identische Krümel. Das Futter ist *begrenzt*.`} frame={segFrame} len={fs.seg.len} />
+          <DayCounter day={rec.day} line={`${f.startPop} identische Krümel. Futter wächst nur an *${f.coloniesStart} Algen*.`} frame={segFrame} len={fs.seg.len} />
         </div>
       )}
       {rec.event && kind === "move" && fs.seg.gen === 0 && segFrame < 90 && <EventCard title={rec.event.title} frame={segFrame} len={90} />}
       {kind === "result" && (
-        <ResultCard day={rec.day} startPop={f.startPop} endPop={f.endPop} speedEnd={f.meanSpeedEnd} mutantsAlive={f.mutantsAlive} heroLine={heroLine} frame={segFrame} len={fs.seg.len} />
+        <ResultCard day={rec.day} startPop={f.startPop} endPop={f.endPop} speedEnd={f.meanSpeedEnd} mutantsAlive={f.mutantsAlive} colonies={[f.coloniesStart, f.coloniesEnd]} heroLine={heroLine} frame={segFrame} len={fs.seg.len} />
       )}
       {kind === "vote" && <VoteCard nextDay={rec.day + 1} frame={segFrame} len={fs.seg.len} />}
     </AbsoluteFill>

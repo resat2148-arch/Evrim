@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 mkdir -p out/stills
 npx remotion bundle video/index.ts --out-dir out/bundle --log=error >/dev/null
 # kare:isim — zamanlama video/timeline.ts'e göre (intro 90, G1 270, diğer nesiller 150, seçilim 48)
-for spec in 40:01-tag-titel 300:02-rekord-3-frisst-5x 385:03-selektion-gen1 640:04-gerhard 1250:05-ergebnis; do
+for spec in 40:01-tag-titel 300:02-futter-waechst-an-algen 385:03-selektion-gen1 440:04-neue-algen-wo-kruemel-starben 1250:05-ergebnis; do
   f="${spec%%:*}"; name="${spec#*:}"
   npx remotion still out/bundle "$COMP" "out/stills/${COMP,,}-${name}.png" --frame="$f" --log=error &
 done
